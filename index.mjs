@@ -38,7 +38,7 @@ const savedb = () => fs.writeFileSync("emojis.json", JSON.stringify(saveddata));
 let scanning = false;
 let scanagain = false;
 async function scanEmojis() {
-  if (scanning) return;
+  if (scanning) return (scanagain = true);
   console.log("Scanning emojis...");
   scanning = true;
   scanagain = false;
