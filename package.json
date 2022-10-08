@@ -1,0 +1,24 @@
+{
+  "name": "revolt-emoji-sync",
+  "version": "1.0.0",
+  "description": "Syncs emojis to revolt from a local folder.",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itzTheMeow/revolt-emoji-sync.git"
+  },
+  "author": "Meow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itzTheMeow/revolt-emoji-sync/issues"
+  },
+  "homepage": "https://github.com/itzTheMeow/revolt-emoji-sync#readme",
+  "dependencies": {
+    "axios": "^1.1.2",
+    "form-data": "^4.0.0",
+    "revolt.js": "^6.0.18"
+  }
+}
