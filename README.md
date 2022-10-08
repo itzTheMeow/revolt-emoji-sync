@@ -8,7 +8,9 @@ All emojis should end in `.png` and be named properly. You can not use capital l
 
 ## Using
 
-You can edit the config, mainly to change the nameTemplate and root dir.
+You can edit the config, mainly to change the nameTemplate and root dir. The script uses `fs.watch` to watch for file changes in the root folder. _Subdirectories are not supported._
+
+Your files should be named `[emoji_name].[png/gif]`. Emoji names should follow revolt specifications. (a-z, 0-9, and \_)
 
 This tool automatically creates servers for you (theres a 99 emoji limit per server). Using the name template: `MeowEmojis` will turn out as `MeowEmojis1`, `MeowEmojis2`, etc. Empty servers WILL NOT be deleted.
 
