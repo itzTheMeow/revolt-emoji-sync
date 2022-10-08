@@ -177,7 +177,7 @@ async function scanEmojis() {
   }
   scanning = false;
   console.log("Done scanning emojis.");
-  if (scanagain) scanEmojis(server);
+  if (scanagain) scanEmojis();
 }
 
 const client = new Client({ autoReconnect: true });
