@@ -5,7 +5,7 @@ import axios from "axios";
 import FormData from "form-data";
 
 const config = {
-  root: "P:\\Media\\Images\\Emojis\\_lib", // folder to sync emojis from
+  root: "/home/pcloud/Media/Images/Emojis/_lib", // folder to sync emojis from
   nameTemplate: "MeowEmojis",
   emojiRegex: /^[a-z0-9_]+$/, // https://github.com/revoltchat/backend/blob/master/crates/delta/src/util/regex.rs
 };
