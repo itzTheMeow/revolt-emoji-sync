@@ -175,9 +175,12 @@ async function scanEmojis() {
     savedb();
     console.log(`Created :${f}:.`);
   }
-  scanning = false;
-  console.log("Done scanning emojis.");
-  if (scanagain) scanEmojis();
+  // wait 1sec for resync
+  setTimeout(() => {
+    scanning = false;
+    console.log("Done scanning emojis.");
+    if (scanagain) scanEmojis();
+  }, 1000);
 }
 
 const client = new Client({ autoReconnect: true });
