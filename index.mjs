@@ -185,11 +185,11 @@ async function scanEmojis() {
 
 const client = new Client({ autoReconnect: true });
 
-client.on("ready", async () => {
+client.once("ready", async () => {
   console.log(`Client is now online as ${client.user.username}.`);
 
   scanEmojis();
-  setInterval(() => scanEmojis(), 1000 * 60 * 15); // scan every 15m too
+  setInterval(() => scanEmojis(), 1000 * 60 * 60); // scan every hour too
   // sort of half works but ig itll do
   fs.watch(config.root, {}, () => scanEmojis());
 });
