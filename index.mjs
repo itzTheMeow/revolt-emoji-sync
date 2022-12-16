@@ -1,8 +1,7 @@
-import fs, { read } from "fs";
+import fs from "fs";
 import path from "path";
-import { Client, Server } from "revolt.js";
-import axios from "axios";
-import FormData from "form-data";
+import { Client } from "revolt.js";
+import { uploadAttachment } from "revolt-toolset";
 
 const config = {
   root: "/home/pcloud/Media/Images/Emojis/_lib", // folder to sync emojis from
@@ -103,15 +102,7 @@ async function scanEmojis() {
     }
 
     const png = fs.readFileSync(fullPath);
-    const form = new FormData();
-    form.append("file", png, `${f}.${ext.toLowerCase()}`);
-    const res = await axios // this apparently has no ratelimit
-      .post("https://autumn.revolt.chat/emojis", form, {
-        headers: form.getHeaders(),
-        data: form,
-      })
-      .catch(console.error);
-    const fileID = res.data?.id;
+    const fileID = await uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "emojis");
     if (!fileID) {
       console.error(`No file ID found for :${f}:.`);
       continue;
@@ -130,22 +121,10 @@ async function scanEmojis() {
         } else {
           console.log(`Creating new server as the ${i} others are full.`);
           const ns = await client.servers.createServer({ name: `${config.nameTemplate}${i + 1}` });
-          const form = new FormData();
-          form.append("file", png, `${f}.${ext.toLowerCase()}`);
           // set the server icon to the emoji causing its creation
-          axios
-            .post("https://autumn.revolt.chat/icons", form, {
-              headers: form.getHeaders(),
-              data: form,
-            })
-            .then((res) =>
-              ns
-                .edit({
-                  icon: res.data.id,
-                })
-                .catch(console.error)
-            )
-            .catch(console.error);
+          uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "icons").then((icon) =>
+            ns.edit({ icon }).catch(console.error)
+          );
           ns.channels[0].delete().catch(console.error);
           serverList.push(ns._id);
           savedb();
