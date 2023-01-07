@@ -115,7 +115,7 @@ async function scanEmojis() {
       const get = async (i) => {
         const s = client.servers.get(serverList[i]);
         if (s) {
-          if (getMyEmojis().filter((e) => e.parent.id == s._id).length >= 99)
+          if (getMyEmojis().filter((e) => e.parent.id == s._id).length > 99)
             return await get(i + 1);
           else return s;
         } else {
