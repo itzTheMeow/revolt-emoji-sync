@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/itzTheMeow/revolt-emoji-sync#readme",
   "dependencies": {
-    "revolt-toolset": "^0.0.24",
-    "revolt.js": "^6.0.18"
+    "revolt-toolset": "^1.0.66"
   }
 }

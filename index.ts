@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Client } from "revolt.js";
-import { uploadAttachment } from "revolt-toolset";
+import { Client, Server } from "revolt-toolset";
 
 const config = {
   root: "/home/pcloud/Media/Images/Emojis/_lib", // folder to sync emojis from
@@ -12,11 +11,12 @@ const config = {
 // Put session JSON in 'session.json'.
 // A bot can't be used since bots cant edit emojis.
 // You can log into https://revolt.itsmeow.cat and run `JSON.parse(localStorage.session)` in devtools to get the session info.
+// You just need the `token` property.
 
-const sessionData = JSON.parse(fs.readFileSync("session.json"));
+const sessionData = JSON.parse(fs.readFileSync("session.json").toString());
 
 if (!fs.existsSync("emojis.json")) fs.writeFileSync("emojis.json", `{"e":{},"s":[]}`);
-const saveddata = JSON.parse(fs.readFileSync("emojis.json"));
+const saveddata = JSON.parse(fs.readFileSync("emojis.json").toString());
 const emojidb = saveddata.e;
 const serverList = saveddata.s;
 const savedb = () => fs.writeFileSync("emojis.json", JSON.stringify(saveddata));
@@ -49,9 +49,7 @@ async function scanEmojis() {
   });
   const toAdd = fs.readdirSync(config.root);
   const getMyEmojis = () =>
-    [...client.emojis.values()].filter(
-      (e) => e.parent.type == "Server" && serverList.includes(e.parent.id)
-    );
+    [...client.emojis.known].filter((e) => e.parent && serverList.includes(e.parentID));
   const hasEmojis = getMyEmojis();
   await Promise.all(
     hasEmojis.map(async (e) => {
@@ -92,7 +90,7 @@ async function scanEmojis() {
     }
     const emojiSettings = emojidb[f];
     if (emojiSettings) {
-      const hasEmoji = hasEmojis.find((e) => e._id == emojiSettings.id);
+      const hasEmoji = hasEmojis.find((e) => e.id == emojiSettings.id);
       // already exists
       if (hasEmoji && emojiSettings.mod == createdAt) continue;
       else if (hasEmoji) {
@@ -102,54 +100,48 @@ async function scanEmojis() {
     }
 
     const png = fs.readFileSync(fullPath);
-    const fileID = await uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "emojis");
+    const fileID = await client.uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "emojis");
     if (!fileID) {
       console.error(`No file ID found for :${f}:.`);
       continue;
     }
     // this bucket gets ratelimited to 20 every 10s - so just wait a bit over the half second limit
     // should also work for the deletions
-    await new Promise((r) => setTimeout(() => r(), 750));
-    const server = await (async () => {
+    await new Promise((r) => setTimeout(() => r(void 0), 750));
+    const server: Server = await (async () => {
       // searches servers to find the first one thats not full, otherwise will create one
       const get = async (i) => {
         const s = client.servers.get(serverList[i]);
         if (s) {
-          if (getMyEmojis().filter((e) => e.parent.id == s._id).length > 99)
-            return await get(i + 1);
+          if (getMyEmojis().filter((e) => e.parent.id == s.id).length > 99) return await get(i + 1);
           else return s;
         } else {
           console.log(`Creating new server as the ${i} others are full.`);
-          const ns = await client.servers.createServer({ name: `${config.nameTemplate}${i + 1}` });
+          const ns = await client.createServer({ name: `${config.nameTemplate}${i + 1}` });
           // set the server icon to the emoji causing its creation
-          uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "icons").then((icon) =>
-            ns.edit({ icon }).catch(console.error)
-          );
+          client
+            .uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "icons")
+            .then((icon) => ns.edit({ icon }).catch(console.error));
           ns.channels[0].delete().catch(console.error);
-          serverList.push(ns._id);
+          serverList.push(ns.id);
           savedb();
           return ns;
         }
       };
       return await get(0);
     })();
-    const newEmoji = await client.api
-      .put(`/custom/emoji/${fileID}`, {
-        name: f,
-        parent: { type: "Server", id: server._id },
-      })
-      .catch((err) => {
-        console.error(err);
-        console.error(err.response?.data);
-      });
-    if (!newEmoji || !newEmoji._id) {
+    const newEmoji = await server.emojis.create(fileID, f).catch((err) => {
+      console.error(err);
+      console.error(err.response?.data);
+    });
+    if (!newEmoji || !newEmoji.id) {
       console.error(`No emoji uploaded for :${f}:.`);
       continue;
     }
     emojidb[f] = {
-      id: newEmoji._id,
+      id: newEmoji.id,
       mod: createdAt,
-      serv: server._id,
+      serv: server.id,
     };
     savedb();
     console.log(`Created :${f}:.`);
@@ -162,18 +154,15 @@ async function scanEmojis() {
   }, 1000);
 }
 
-const client = new Client({ autoReconnect: true });
+const client = new Client({ reconnect: true });
 
 client.once("ready", async () => {
-  console.log(`Client is now online as ${client.user.username}.`);
+  console.log(`Client is online as ${client.user.username}.`);
 
   scanEmojis();
   setInterval(() => scanEmojis(), 1000 * 60 * 60); // scan every hour too
   // sort of half works but ig itll do
   fs.watch(config.root, {}, () => scanEmojis());
 });
-client.on("emoji/delete", (id) => {
-  client.emojis.delete(id);
-});
 
-client.useExistingSession(sessionData);
+client.login(sessionData.token, "user");
