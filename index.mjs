@@ -108,7 +108,7 @@ async function scanEmojis() {
     // this bucket gets ratelimited to 20 every 10s - so just wait a bit over the half second limit
     // should also work for the deletions
     await new Promise((r) => setTimeout(() => r(void 0), 750));
-    const server: Server = await (async () => {
+    const server = await (async () => {
       // searches servers to find the first one thats not full, otherwise will create one
       const get = async (i) => {
         const s = client.servers.get(serverList[i]);
