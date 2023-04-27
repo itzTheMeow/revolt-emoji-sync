@@ -1,11 +1,11 @@
 lockfileVersion: 5.4
 
 specifiers:
-  revkit: ^1.1.4
+  revkit: ^1.1.5
   ws: ^8.13.0
 
 dependencies:
-  revkit: 1.1.4_ws@8.13.0
+  revkit: 1.1.5_ws@8.13.0
   ws: 8.13.0
 
 packages:
@@ -180,8 +180,8 @@ packages:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
-  /revkit/1.1.4_ws@8.13.0:
-    resolution: {integrity: sha512-1lAE0yeWiFdBAvJL26ijF81xSAAsK+6h6WJJzQEiVkU8gOPS46423wYRWbW6sEy7Aw8iiOLkudf0LE9rddoFTA==}
+  /revkit/1.1.5_ws@8.13.0:
+    resolution: {integrity: sha512-rHOODt1x2oz7ZcmMJYtlOvVRSI62zEPjbe+RRcbafJvH+s5BpbdXtMgb5C+7Y0YaSg01yEcCnruF4hIVALrZ9Q==}
     dependencies:
       '@insertish/exponential-backoff': 3.1.0-patch.2
       '@insertish/isomorphic-ws': 4.0.1_ws@8.13.0
