@@ -49,7 +49,7 @@ async function scanEmojis() {
   });
   const toAdd = fs.readdirSync(config.root);
   const getMyEmojis = () =>
-    [...client.emojis.known].filter((e) => e.parent && serverList.includes(e.parentID));
+    client.emojis.filter((e) => e.parentID && serverList.includes(e.parentID));
   const hasEmojis = getMyEmojis();
   await Promise.all(
     hasEmojis.map(async (e) => {
@@ -114,7 +114,7 @@ async function scanEmojis() {
       const get = async (i) => {
         const s = client.servers.get(serverList[i]);
         if (s) {
-          if (getMyEmojis().filter((e) => e.parent.id == s.id).length > 99) return await get(i + 1);
+          if (getMyEmojis().filter((e) => e.parentID == s.id).length > 99) return await get(i + 1);
           else return s;
         } else {
           console.log(`Creating new server as the ${i} others are full.`);
