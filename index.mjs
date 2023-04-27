@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Client, Server } from "revolt-toolset";
+import { Client, Server } from "revkit";
 
 const config = {
   root: "/home/pcloud/Media/Images/Emojis/_lib", // folder to sync emojis from
