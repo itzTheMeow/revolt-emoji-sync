@@ -124,7 +124,7 @@ async function scanEmojis() {
             .uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "icons")
             .then((icon) => ns.edit({ icon }).catch(console.error))
             .catch(console.error);
-          ns.channels[0].delete().catch(console.error);
+          ns.channels.items()[0]?.delete().catch(console.error);
           serverList.push(ns.id);
           savedb();
           return ns;
