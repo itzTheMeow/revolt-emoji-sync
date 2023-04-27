@@ -122,7 +122,8 @@ async function scanEmojis() {
           // set the server icon to the emoji causing its creation
           client
             .uploadAttachment(`${f}.${ext.toLowerCase()}`, png, "icons")
-            .then((icon) => ns.edit({ icon }).catch(console.error));
+            .then((icon) => ns.edit({ icon }).catch(console.error))
+            .catch(console.error);
           ns.channels[0].delete().catch(console.error);
           serverList.push(ns.id);
           savedb();
